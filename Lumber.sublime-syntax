@@ -1,0 +1,63 @@
+# NOTE: this syntax highlight is extremely basic, and was made after
+# 15 minutes of reading docs just to avoid the endless-wall-of-colorless-text.
+# Maybe all of scopes below is semantically wrong, but it's just works good enough :)
+
+%YAML 1.2
+---
+name: Lumber
+file_extensions: [lumber]
+scope: source.lumber
+
+variables:
+  lowercaseVar: '(\b[a-z_])[a-zA-Z0-9_]*\b'
+  uppercaseVar: '(?<![a-zA-Z0-9_])[_A-Z][a-zA-Z0-9_]*'
+
+contexts:
+  main:
+    - include: comments
+    - include: operators
+    - match: '(mod|pub)'
+      scope: keyword.import.lumber
+      push: importExport
+    - match: '[@]?{{lowercaseVar}}::'
+      scope: meta.namespace.lumber
+    - match: '\b(false|true)\b'
+      scope: constant.language.lumber
+    - include: variables
+
+  importExport:
+    - match: '[\(|\)]'
+      scope: keyword.import.lumber
+    - match: '{{lowercaseVar}}'
+      scope: variable.function.lumber
+    - match: '/\d'
+      scope: constant.numeric.integer.lumber
+    - match: '\.'
+      scope: punctuation.terminator.lumber
+      pop: true
+
+  variables:
+    - match: '{{lowercaseVar}}'
+      scope: variable.function.lumber
+    - match: '{{uppercaseVar}}'
+      scope: variable.parameter.uppercase.lumber
+
+  comments:
+    - match: '//.*'
+      scope: comment.line.lumber
+    - match: '/\*'
+      scope: comment.block.lumber
+      push: multilineComment
+
+  multilineComment:
+    - match: '[^(\*/)]*'
+      scope: comment.block.lumber
+    - match: '\*/'
+      scope: comment.block.lumber
+      pop: true
+
+  operators:
+    - match: :-
+      scope: keyword.declaration.function.lumber
+    - match: '::'
+      scope: punctuation.accessor.lumber
